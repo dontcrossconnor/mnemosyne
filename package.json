@@ -93,7 +93,7 @@
     "@types/node": "^25.3.0",
     "@vitest/coverage-v8": "^4.0.18",
     "ioredis": "^5.9.3",
-    "typescript": "^5.4.0",
+    "typescript": "^6.0.2",
     "vitest": "^4.0.18"
   },
   "engines": {
