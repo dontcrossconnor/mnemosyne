@@ -1,0 +1,6 @@
+name: mnemosyne
+description: "Vector memory with semantic recall, classification, decay, and self-improvement (Qdrant + Ollama)"
+author: Strix
+version: 1.0.0
+license: MIT
+homepage: https://github.com/dontcrossconnor/mnemosyne
