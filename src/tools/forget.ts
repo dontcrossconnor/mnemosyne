@@ -14,6 +14,11 @@ export interface ForgetContext {
   agentId: string;
   bm25Index?: BM25Index;
   onBroadcast?: (msg: { memoryId: string; agentId: string; event: string }) => void;
+  /** Optional collection name overrides. Falls back to DEFAULT_COLLECTIONS. */
+  collections?: {
+    shared?: string;
+    private?: string;
+  };
 }
 
 export interface ForgetResult {
@@ -27,9 +32,12 @@ export async function forget(
 ): Promise<ForgetResult> {
   const ids: string[] = [];
 
+  const shared = ctx.collections?.shared ?? DEFAULT_COLLECTIONS.SHARED;
+  const priv = ctx.collections?.private ?? DEFAULT_COLLECTIONS.PRIVATE;
+
   if (options.memoryId) {
     // Direct ID deletion
-    const collection = options.collection || DEFAULT_COLLECTIONS.SHARED;
+    const collection = options.collection || shared;
     await ctx.db.softDelete(collection, options.memoryId);
     ctx.bm25Index?.removeDocument(options.memoryId);
     ids.push(options.memoryId);
@@ -40,8 +48,8 @@ export async function forget(
 
     for (const r of results) {
       const collection = r.entry.classification === "private"
-        ? DEFAULT_COLLECTIONS.PRIVATE
-        : DEFAULT_COLLECTIONS.SHARED;
+        ? priv
+        : shared;
       await ctx.db.softDelete(collection, r.entry.id);
       ctx.bm25Index?.removeDocument(r.entry.id);
       ids.push(r.entry.id);

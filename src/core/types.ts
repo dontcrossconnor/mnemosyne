@@ -42,7 +42,10 @@ export const DEFAULT_COLLECTIONS: {
 
 /**
  * Override default collection names globally.
- * Called during createMnemosyne() with resolved config.
+ *
+ * @deprecated This function mutates module-level state and is not thread-safe.
+ * Instead, pass `collections` directly to QdrantDB constructor or to tool contexts.
+ * Will be removed in v2.0. Currently a no-op with a console.warn.
  */
 export function configureCollections(collections: {
   shared?: string;

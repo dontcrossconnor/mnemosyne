@@ -4,3 +4,4 @@ export { EmbeddingsClient } from "./embeddings.js";
 export { classifyMemory } from "./security.js";
 export * from "./dedup.js";
 export * from "./bm25.js";
+export { fireAndForget } from "./async-util.js";

@@ -55,6 +55,12 @@ export type MnemosyneConfig = {
     profiles?: string;
     skills?: string;
   };
+
+  // Input validation
+  /** Max characters for store() text. Default 10,000. */
+  maxStoreLength?: number;
+  /** Max results per recall() call. Default 50. */
+  maxRecallResults?: number;
 };
 
 export type ResolvedConfig = Required<
@@ -90,6 +96,8 @@ export type ResolvedConfig = Required<
   privateCollection: string;
   profilesCollection: string;
   skillsCollection: string;
+  maxStoreLength: number;
+  maxRecallResults: number;
 };
 
 function validateUrl(url: string, field: string): void {
@@ -155,6 +163,8 @@ export function resolveConfig(cfg: MnemosyneConfig): ResolvedConfig {
     privateCollection: cfg.collections?.private ?? DEFAULT_COLLECTIONS.PRIVATE,
     profilesCollection: cfg.collections?.profiles ?? DEFAULT_COLLECTIONS.PROFILES,
     skillsCollection: cfg.collections?.skills ?? DEFAULT_COLLECTIONS.SKILLS,
+    maxStoreLength: cfg.maxStoreLength ?? 10_000,
+    maxRecallResults: cfg.maxRecallResults ?? 50,
   };
 }
 

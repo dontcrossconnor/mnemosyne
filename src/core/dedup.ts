@@ -58,7 +58,7 @@ export function detectConflict(
  */
 export type SemanticMergeResult = {
   shouldMerge: boolean;
-  keepId: string;
+  /** ID of the existing memory to drop (soft-delete). The new memory replaces it. */
   dropId: string;
   mergedMetadata?: Record<string, unknown>;
 };
@@ -66,22 +66,22 @@ export type SemanticMergeResult = {
 /**
  * Check if an existing memory should be merged with a new one.
  * Criteria: >0.92 similarity AND same memory_type.
- * Returns merge instructions: keep newer, absorb older's metadata.
+ * On merge: the NEW memory replaces the old one; the old one is soft-deleted
+ * and its metadata (importance, access count, linked memories) carries forward.
  */
 export function shouldSemanticMerge(
   existing: MemCellSearchResult,
   newText: string,
   newType: string,
 ): SemanticMergeResult {
-  const noMerge = { shouldMerge: false, keepId: "", dropId: "" };
+  const noMerge = { shouldMerge: false, dropId: "" };
 
   if (existing.score < 0.92) return noMerge;
   if (existing.entry.memoryType !== newType) return noMerge;
 
-  // Newer replaces older — keep the new one, link to old
+  // Newer replaces older — soft-delete the old, create new with merged metadata
   return {
     shouldMerge: true,
-    keepId: "new", // Sentinel: caller will use new memory's ID
     dropId: existing.entry.id,
     mergedMetadata: {
       merged_from: existing.entry.id,

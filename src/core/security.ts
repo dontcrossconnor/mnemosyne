@@ -16,7 +16,10 @@ const SECRET_PATTERNS = [
   /id_rsa/i,
   /private.?key/i,
   /\btoken\b/i,
-  /\b\d{4}[-\s]\d{4}[-\s]\d{4}[-\s]\d{4}\b/,
+  // Credit card: grouped (4111-1111-1111-1111) or consecutive (4111111111111111)
+  /\b\d{4}[-.\s]?\d{4}[-.\s]?\d{4}[-.\s]?\d{4}\b/,
+  /\b\d{16}\b/,
+  // SSN
   /\b\d{3}-\d{2}-\d{4}\b/,
 ];
 

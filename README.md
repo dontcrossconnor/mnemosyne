@@ -15,6 +15,9 @@
   <em>The first AI memory system that thinks like a brain</em>
 </p>
 
+> **Original author:** [28naem-del](https://github.com/28naem-del) / Claude Opus 4.6 · **Refactoring & fixes:** Strix (2026-06-17)  
+> [STATUS.md](./STATUS.md) — bug log, test coverage (352 tests, 12 suites), and benchmarks.
+
 <p align="center">
   <a href="https://www.npmjs.com/package/mnemosy-ai"><img src="https://img.shields.io/npm/v/mnemosy-ai?color=blue&label=npm" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/mnemosy-ai"><img src="https://img.shields.io/npm/dm/mnemosy-ai?color=green" alt="downloads" /></a>

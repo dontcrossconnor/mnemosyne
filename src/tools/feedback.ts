@@ -14,6 +14,11 @@ import {
 
 export interface FeedbackContext {
   qdrantUrl: string;
+  /** Optional collection name overrides. Falls back to DEFAULT_COLLECTIONS. */
+  collections?: {
+    shared?: string;
+    private?: string;
+  };
 }
 
 export async function feedback(
@@ -21,9 +26,10 @@ export async function feedback(
   recalledMemories: MemCellSearchResult[],
   userResponse: string,
 ): Promise<FeedbackResult[]> {
+  const shared = ctx.collections?.shared ?? DEFAULT_COLLECTIONS.SHARED;
   return applyMemoryFeedback(
     ctx.qdrantUrl,
-    DEFAULT_COLLECTIONS.SHARED,
+    shared,
     recalledMemories,
     userResponse,
   );

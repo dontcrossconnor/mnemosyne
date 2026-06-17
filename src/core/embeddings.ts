@@ -54,8 +54,9 @@ export class EmbeddingsClient {
     }
 
     if (this.cache.size >= this.maxCache) {
-      const oldest = [...this.cache.entries()].sort((a, b) => a[1].ts - b[1].ts)[0];
-      if (oldest) this.cache.delete(oldest[0]);
+      // O(1) eviction — Map preserves insertion order, so first key = oldest
+      const oldestKey = this.cache.keys().next().value;
+      if (oldestKey !== undefined) this.cache.delete(oldestKey);
     }
     this.cache.set(text, { vector, ts: Date.now() });
 

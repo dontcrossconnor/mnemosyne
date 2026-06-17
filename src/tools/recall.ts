@@ -14,6 +14,7 @@ import { hybridSearch } from "../core/bm25.js";
 import { computeActivation, getDecayStatus } from "../cognitive/decay.js";
 import { routeQuery } from "../cognitive/intent.js";
 import { computeMultiSignalScore, applyDiversityReranking } from "../cognitive/retrieval.js";
+import { fireAndForget } from "../core/async-util.js";
 import type { RecallOptions } from "./types.js";
 
 export interface RecallContext {
@@ -24,6 +25,11 @@ export interface RecallContext {
   enableDecay?: boolean;
   enableBM25?: boolean;
   trustResolver?: (agentId: string) => number;
+  /** Optional collection name overrides. Falls back to DEFAULT_COLLECTIONS. */
+  collections?: {
+    shared?: string;
+    private?: string;
+  };
 }
 
 export async function recall(
@@ -94,11 +100,11 @@ export async function recall(
   const diversified = applyDiversityReranking(scored, limit);
 
   // 8. Update access times (fire-and-forget)
+  const shared = ctx.collections?.shared ?? DEFAULT_COLLECTIONS.SHARED;
+  const priv = ctx.collections?.private ?? DEFAULT_COLLECTIONS.PRIVATE;
   for (const r of diversified) {
-    const collection = r.entry.classification === "private"
-      ? DEFAULT_COLLECTIONS.PRIVATE
-      : DEFAULT_COLLECTIONS.SHARED;
-    ctx.db.updateAccessTime(collection, r.entry.id).catch(() => {});
+    const collection = r.entry.classification === "private" ? priv : shared;
+    fireAndForget(ctx.db.updateAccessTime(collection, r.entry.id), `updateAccessTime(${r.entry.id})`);
   }
 
   return diversified.slice(0, limit);

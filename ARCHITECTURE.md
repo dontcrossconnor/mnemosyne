@@ -6,6 +6,9 @@
   </p>
 </p>
 
+> **Original author:** [28naem-del](https://github.com/28naem-del) / Claude Opus 4.6 · **Refactoring & fixes:** Strix (2026-06-17)  
+> See [STATUS.md](./STATUS.md) for the full bug log, test coverage, and benchmark results.
+
 ---
 
 ## What is Mnemosyne?

@@ -21,6 +21,11 @@ export interface StoreContext {
   agentId: string;
   bm25Index?: BM25Index;
   onBroadcast?: (msg: { memoryId: string; agentId: string; event: string }) => void;
+  /** Optional collection name overrides. Falls back to DEFAULT_COLLECTIONS. */
+  collections?: {
+    shared?: string;
+    private?: string;
+  };
 }
 
 export async function store(
@@ -28,6 +33,12 @@ export async function store(
   text: string,
   options: StoreOptions = {},
 ): Promise<MemCell> {
+  // 0. Input validation
+  const maxLen = options.maxStoreLength ?? 10_000;
+  if (text.length > maxLen) {
+    throw new Error(`Store text exceeds max length of ${maxLen} characters (got ${text.length})`);
+  }
+
   // 1. Security classification
   const classification = options.classification || classifyMemory(text, { agentId: ctx.agentId });
   if (classification === "secret") {
@@ -38,9 +49,9 @@ export async function store(
   const vector = await ctx.embeddings.embed(text);
 
   // 3. Deduplication check
-  const collection = classification === "private"
-    ? DEFAULT_COLLECTIONS.PRIVATE
-    : DEFAULT_COLLECTIONS.SHARED;
+  const shared = ctx.collections?.shared ?? DEFAULT_COLLECTIONS.SHARED;
+  const priv = ctx.collections?.private ?? DEFAULT_COLLECTIONS.PRIVATE;
+  const collection = classification === "private" ? priv : shared;
   const existing = await ctx.db.search(collection, vector, 1, 0.92);
 
   if (existing.length > 0 && isDuplicate(existing[0].score)) {

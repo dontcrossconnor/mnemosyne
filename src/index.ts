@@ -89,7 +89,8 @@ import {
   bootstrapBM25Index,
   createQdrantTextIndex,
 } from "./core/bm25.js";
-import { DEFAULT_COLLECTIONS, configureCollections, type MemCell, type MemCellSearchResult, type BroadcastMessage } from "./core/types.js";
+import { DEFAULT_COLLECTIONS, type MemCell, type MemCellSearchResult, type BroadcastMessage } from "./core/types.js";
+import { fireAndForget } from "./core/async-util.js";
 import {
   classifyMemoryType,
   classifyUrgency,
@@ -231,14 +232,6 @@ export async function createMnemosyne(userConfig: MnemosyneConfigInput): Promise
   };
   const cfg = resolveConfig(normalizedConfig);
 
-  // Override global DEFAULT_COLLECTIONS so all modules see user's names
-  configureCollections({
-    shared: cfg.sharedCollection,
-    private: cfg.privateCollection,
-    profiles: cfg.profilesCollection,
-    skills: cfg.skillsCollection,
-  });
-
   const db = new QdrantDB(cfg.vectorDbUrl, cfg.agentId, {
     shared: cfg.sharedCollection,
     private: cfg.privateCollection,
@@ -276,16 +269,16 @@ export async function createMnemosyne(userConfig: MnemosyneConfigInput): Promise
   if (cfg.enableBM25) {
     bm25Index = new BM25Index();
     // Bootstrap asynchronously
-    createQdrantTextIndex(cfg.vectorDbUrl, cfg.sharedCollection).catch(() => {});
-    bootstrapBM25Index(cfg.vectorDbUrl, cfg.sharedCollection, bm25Index, 5000, 100).catch(() => {});
+    fireAndForget(createQdrantTextIndex(cfg.vectorDbUrl, cfg.sharedCollection), "createQdrantTextIndex");
+    fireAndForget(bootstrapBM25Index(cfg.vectorDbUrl, cfg.sharedCollection, bm25Index, 5000, 100), "bootstrapBM25Index");
   }
 
   // Connect optional services
   if (cfg.redisUrl) {
-    layerCache.connect().catch(() => {});
+    fireAndForget(layerCache.connect(), "layerCache.connect");
   }
   if (falkordb) {
-    falkordb.connect().catch(() => {});
+    fireAndForget(falkordb.connect(), "falkordb.connect");
   }
 
   // Session state
@@ -414,7 +407,7 @@ export async function createMnemosyne(userConfig: MnemosyneConfigInput): Promise
     }
 
     // Cache invalidation
-    layerCache.invalidateAll().catch(() => {});
+    fireAndForget(layerCache.invalidateAll(), "layerCache.invalidateAll");
 
     // BM25 index update
     if (bm25Index) bm25Index.addDocument(cell.id, text);
@@ -517,11 +510,11 @@ export async function createMnemosyne(userConfig: MnemosyneConfigInput): Promise
     for (const r of results.slice(0, limit)) {
       if (r.entry.id.startsWith("graph-")) continue;
       const col = r.entry.classification === "private" ? cfg.privateCollection : cfg.sharedCollection;
-      db.updateAccessTime(col, r.entry.id).catch(() => {});
+      fireAndForget(db.updateAccessTime(col, r.entry.id), `updateAccessTime(${r.entry.id})`);
     }
 
     const finalResults = results.slice(0, limit);
-    layerCache.set(query, limit, minScore, finalResults).catch(() => {});
+    fireAndForget(layerCache.set(query, limit, minScore, finalResults), "layerCache.set");
     lastRecalledResults = finalResults;
 
     return finalResults;
@@ -567,7 +560,7 @@ export async function createMnemosyne(userConfig: MnemosyneConfigInput): Promise
       const opts: ForgetOptions = typeof idOrOptions === "string" ? { id: idOrOptions } : idOrOptions;
       if (opts.id) {
         await db.softDelete(cfg.sharedCollection, opts.id);
-        await db.softDelete(cfg.privateCollection, opts.id).catch(() => {});
+        try { await db.softDelete(cfg.privateCollection, opts.id); } catch { /* best-effort: may not be in private collection */ }
         return true;
       }
       if (opts.query) {

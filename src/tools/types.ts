@@ -4,7 +4,7 @@
 
 import type { MemoryType, UrgencyLevel, Domain, Classification } from "../core/types.js";
 
-export interface StoreOptions {
+export type StoreOptions = {
   importance?: number;
   memoryType?: MemoryType;
   urgency?: UrgencyLevel;
@@ -12,7 +12,9 @@ export interface StoreOptions {
   classification?: Classification;
   userId?: string;
   metadata?: Record<string, unknown>;
-}
+  /** Override default max store length for this call. */
+  maxStoreLength?: number;
+};
 
 export interface RecallOptions {
   limit?: number;
@@ -20,6 +22,8 @@ export interface RecallOptions {
   userId?: string;
   includeChains?: boolean;
   filters?: Record<string, unknown>;
+  /** Override default max recall results for this call. */
+  maxRecallResults?: number;
 }
 
 export interface ForgetOptions {

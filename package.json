@@ -49,7 +49,11 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "bench": "tsx bench.ts"
   },
   "keywords": [
     "ai",
@@ -93,6 +97,7 @@
     "@types/node": "^25.3.0",
     "@vitest/coverage-v8": "^4.0.18",
     "ioredis": "^5.9.3",
+    "tsx": "^4.22.0",
     "typescript": "^5.4.0",
     "vitest": "^4.0.18"
   },
