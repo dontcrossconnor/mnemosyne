@@ -79,7 +79,7 @@ def get_config_schema() -> List[Dict[str, Any]]:
             "key": "embedding_model",
             "description": "Embedding model name",
             "required": False,
-            "default": "nomic-embed-text",
+            "default": "mxbai-embed-large",
         },
         {
             "key": "isolated",
