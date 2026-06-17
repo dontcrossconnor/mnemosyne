@@ -36,7 +36,7 @@ export class QdrantDB {
   }
 
   /** Create a collection if it doesn't already exist. */
-  async ensureCollection(name: string, vectorSize: number = 768): Promise<void> {
+  async ensureCollection(name: string, vectorSize: number = 1024): Promise<void> {
     const res = await fetch(`${this.baseUrl}/collections/${name}`, { method: "GET" });
     if (res.status === 404) {
       const createRes = await fetch(`${this.baseUrl}/collections/${name}`, {

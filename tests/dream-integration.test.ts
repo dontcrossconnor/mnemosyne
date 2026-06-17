@@ -27,7 +27,7 @@ import {
 // Helpers
 // ============================================================================
 
-const VECTOR_SIZE = 768;
+const VECTOR_SIZE = 1024;
 
 /**
  * Build a normalised vector with a known cosine similarity to a "base" vector.

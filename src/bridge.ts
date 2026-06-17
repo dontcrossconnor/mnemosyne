@@ -18,7 +18,7 @@ import { createInterface } from "node:readline";
 const QDRANT_URL = process.argv[2] || "http://localhost:6333";
 const EMBEDDING_URL = process.argv[3] || "http://localhost:11434/v1/embeddings";
 const AGENT_ID = process.argv[4] || "hermes";
-const MODEL = process.argv[5] || "nomic-embed-text";
+const MODEL = process.argv[5] || "mxbai-embed-large";
 const COLLECTION_PREFIX = process.argv[6] || "";
 
 let memory: Mnemosyne | null = null;

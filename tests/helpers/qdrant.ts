@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 const QDRANT_URL = "http://localhost:6333";
-const VECTOR_SIZE = 768;
+const VECTOR_SIZE = 1024;
 
 /** Unique collection name per test run to avoid collisions */
 let collCounter = 0;

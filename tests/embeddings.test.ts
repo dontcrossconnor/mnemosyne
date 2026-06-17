@@ -1,12 +1,12 @@
 /**
  * EmbeddingsClient tests — real Ollama, no mocks.
- * Requires Ollama running at localhost:11434 with nomic-embed-text.
+ * Requires Ollama running at localhost:11434 with mxbai-embed-large.
  */
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { EmbeddingsClient } from "../src/core/embeddings.js";
 
 const OLLAMA_URL = "http://localhost:11434/v1/embeddings";
-const MODEL = "nomic-embed-text";
+const MODEL = "mxbai-embed-large";
 
 describe("EmbeddingsClient (real Ollama)", () => {
   let client: EmbeddingsClient;
@@ -15,10 +15,10 @@ describe("EmbeddingsClient (real Ollama)", () => {
     client = new EmbeddingsClient(OLLAMA_URL, MODEL);
   });
 
-  it("returns a 768-dim vector for text", async () => {
+  it("returns a 1024-dim vector for text", async () => {
     const vec = await client.embed("hello world");
     expect(Array.isArray(vec)).toBe(true);
-    expect(vec.length).toBe(768);
+    expect(vec.length).toBe(1024);
     expect(typeof vec[0]).toBe("number");
   });
 
@@ -41,13 +41,13 @@ describe("EmbeddingsClient (real Ollama)", () => {
 
   it("handles empty string", async () => {
     const vec = await client.embed("");
-    expect(vec.length).toBe(768);
+    expect(vec.length).toBe(1024);
   });
 
   it("handles long text", async () => {
     const long = Array(1000).fill("memory").join(" ");
     const vec = await client.embed(long);
-    expect(vec.length).toBe(768);
+    expect(vec.length).toBe(1024);
   });
 
   it("clearCache forces a fresh API call", async () => {

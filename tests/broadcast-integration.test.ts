@@ -74,7 +74,7 @@ async function waitFor(
 }
 
 /**
- * Deterministic 768-dim vector from a block name (matching the approach
+ * Deterministic 1024-dim vector from a block name (matching the approach
  * in qdrant helper's textToVector).
  */
 function blockNameVector(name: string): number[] {

@@ -23,7 +23,7 @@ describe("recall (real Qdrant + Ollama)", () => {
     await createTestCollection(sharedColl);
     await createTestCollection(privateColl);
     db = new QdrantDB(QDRANT_URL, AGENT_ID, collections);
-    embeddings = new EmbeddingsClient(OLLAMA_URL, "nomic-embed-text");
+    embeddings = new EmbeddingsClient(OLLAMA_URL, "mxbai-embed-large");
 
     // Seed test data via store tool
     const { store } = await import("../src/tools/store.js");
