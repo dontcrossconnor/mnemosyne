@@ -81,13 +81,6 @@ def get_config_schema() -> List[Dict[str, Any]]:
             "required": False,
             "default": "mxbai-embed-large",
         },
-        {
-            "key": "isolated",
-            "description": "Total isolation per profile (disables ToMA). false = shared pool with agentId scoping (ToMA works)",
-            "required": False,
-            "default": "false",
-            "choices": ["true", "false"],
-        },
     ]
 
 
