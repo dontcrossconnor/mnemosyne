@@ -209,10 +209,10 @@ describe("findPreferenceReminders", () => {
     expect(results[0].type).not.toBe("warning");
   });
 
-  it("detects vim vs vscode conflict", () => {
-    const prefs = new Map([["tool:vim", makePreference({ key: "tool:vim", value: "prefers vim editor" })]])
-    // "editor" passes first gate (1 keyword match), "vscode" triggers conflict pair, no "vim" in prompt
-    const results = findPreferenceReminders("editor in vscode", makeUserModel(prefs));
+  it("detects vim vs vscode conflict even without keyword match", () => {
+    const prefs = new Map([["tool:vim", makePreference({ key: "tool:vim", value: "vim editor preference" })]])
+    // Conflict detection runs before the keyword gate — "vscode" in prompt + "vim" in key = conflict
+    const results = findPreferenceReminders("open this in vscode", makeUserModel(prefs));
     expect(results.length).toBe(1);
     expect(results[0].type).toBe("warning");
   });

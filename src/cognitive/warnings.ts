@@ -227,9 +227,9 @@ export function findPreferenceReminders(
     if (allKeywords.length === 0) continue;
 
     const matchCount = allKeywords.filter(w => promptLower.includes(w)).length;
-    if (matchCount < 1) continue;
 
-    // Check for conflict indicators: user doing opposite of preference
+    // Check for conflict indicators BEFORE the keyword gate:
+    // a conflict pair (vim→vscode) should fire even if no keyword matches
     const conflictPairs: Array<[string, string]> = [
       ["typescript", "javascript"],
       ["python", "javascript"],
@@ -256,6 +256,10 @@ export function findPreferenceReminders(
         break;
       }
     }
+
+    // Keyword gate: need at least 1 match to surface non-conflict reminders
+    // Conflict pairs bypass this gate — if we detected a conflict, surface it
+    if (matchCount < 1 && !isConflict) continue;
 
     // Only surface as reminder if there's a conflict or strong relevance
     if (!isConflict && matchCount < 2) continue;
