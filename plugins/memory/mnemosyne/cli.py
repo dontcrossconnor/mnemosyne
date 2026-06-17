@@ -83,10 +83,9 @@ def get_config_schema() -> List[Dict[str, Any]]:
         },
         {
             "key": "isolated",
-            "description": "Total isolation per profile (disables ToMA). false = shared pool with agentId scoping (ToMA works)",
+            "description": "Total isolation per profile (disables ToMA). Set to 'true' for isolated collections per profile, 'false' for shared pool with agentId scoping (ToMA works)",
             "required": False,
-            "default": False,
-            "choices": [True, False],
+            "default": "false",
         },
     ]
 

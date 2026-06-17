@@ -24,7 +24,7 @@ class MnemosyneBridge:
         self._qdrant_url = config.get("qdrant_url", "http://localhost:6333")
         self._embedding_url = config.get("embedding_url", "http://localhost:11434/v1/embeddings")
         self._model = config.get("embedding_model", "nomic-embed-text")
-        self._isolated = config.get("isolated", False)
+        self._isolated = config.get("isolated", "false") == "true"
         self._agent_id = ""
         self._proc: Optional[subprocess.Popen] = None
         self._lock = threading.Lock()
